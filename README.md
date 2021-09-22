@@ -44,3 +44,19 @@
 5. Confirm the subscription
     - An email will automatically be sent to the chosen email address, with the title being the chosen display name. The email will include a link to `Confirm subscription`. 
     - To manually test a subscription and send a confirmation email, go to `Topics` on the sidebar, select your topic and select `Publish message`. Give the email a subject and select `Publish message`. Again, an email will be sent to the selected email address with a confirmation link.
+
+## AWS Auto Scaling group (ASG) diagrams
+#### Initial ASG configuration
+![](./img/ASG_initial_config.PNG)
+
+#### EC2 instance initilised due to to high load
+The ASG will spin up an EC2 instance if the chosen metric goes above the chosen threshold (represented by the red and green bars).
+
+Average metrics can also be used. These will take the average metric across all active EC2 instances within the ASG.
+
+![](./img/ASG_create_ec2.PNG)
+
+#### New instance active
+With the new EC2 instance, the load is then distributed by the load balancer such that the total traffic is distributed fairly evenly.
+
+![](./img/ASG_3_ec2s.PNG)

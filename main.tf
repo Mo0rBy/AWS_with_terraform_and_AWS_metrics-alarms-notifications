@@ -287,7 +287,7 @@ resource "aws_autoscaling_policy" "app_ASG_scaleup_averageCPU_policy" {
             # Trying a different metric and CPU stays super low (cant get to 1%)
             # ASGAverageNetworkIn
         }
-        target_value = 10
+        target_value = 5
     }
 }
 
@@ -303,15 +303,15 @@ resource "aws_autoscaling_policy" "app_ASG_scaledown_averageCPU_policy" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_down_averageCPU_alarm_metric" {
-    alarm_name = "Scaledown averageCPU alarm"
+    alarm_name = "SRE Will Scaledown averageCPU alarm"
     comparison_operator = "LessThanThreshold"
 
     metric_name = "CPUUtilization"
     statistic = "Average"
 
-    threshold = "50"
-    period = "120"
-    evaluation_periods = "2"
+    threshold = 3
+    period = 120
+    evaluation_periods = 2
 
     namespace = "AWS/EC2"
     alarm_description = "Monitors ASG EC2 average cpu utilization (for scale down policy)"
@@ -324,44 +324,43 @@ resource "aws_cloudwatch_metric_alarm" "scale_down_averageCPU_alarm_metric" {
 # NetworkIn
 ###########
 
-resource "aws_autoscaling_policy" "app_ASG_scaleup_averageNetworkIn_policy" {
-    name = "Scaleup averageNetworkIn policy"
-    policy_type = "TargetTrackingScaling"
-    estimated_instance_warmup = 100
-    autoscaling_group_name = aws_autoscaling_group.sre_will_ASG_tf.name
+# resource "aws_autoscaling_policy" "app_ASG_scaleup_averageNetworkIn_policy" {
+#     name = "Scaleup averageNetworkIn policy"
+#     policy_type = "TargetTrackingScaling"
+#     estimated_instance_warmup = 100
+#     autoscaling_group_name = aws_autoscaling_group.sre_will_ASG_tf.name
 
-    target_tracking_configuration {
-        predefined_metric_specification {
-            predefined_metric_type = "ASGAverageNetworkIn"
-        }
-        target_value = 1000000
-    }
-}
+#     target_tracking_configuration {
+#         predefined_metric_specification {
+#             predefined_metric_type = "ASGAverageNetworkIn"
+#         }
+#         target_value = 1250000
+#     }
+# }
 
-resource "aws_autoscaling_policy" "app_ASG_scaledown_averageNetworkIn_policy" {
-    name = "sre_will_ASG_scale_down_averageNetworkIn_policy"
-    # Scaledown averageNetworkIn policy
-    scaling_adjustment = -1
-    adjustment_type = "ChangeInCapacity"
-    cooldown = 300
-    autoscaling_group_name = aws_autoscaling_group.sre_will_ASG_tf.id
-}
+# resource "aws_autoscaling_policy" "app_ASG_scaledown_averageNetworkIn_policy" {
+#     name = "scaledown averageNetworkIn policy"
+#     scaling_adjustment = -1
+#     adjustment_type = "ChangeInCapacity"
+#     cooldown = 300
+#     autoscaling_group_name = aws_autoscaling_group.sre_will_ASG_tf.id
+# }
 
-resource "aws_cloudwatch_metric_alarm" "scale_down_averageNetworkIn_alarm_metric" {
-    alarm_name = "Scaledown averageNetworkIn alarm"
-    comparison_operator = "LessThanThreshold"
+# resource "aws_cloudwatch_metric_alarm" "scale_down_averageNetworkIn_alarm_metric" {
+#     alarm_name = "SRE Will Scaledown averageNetworkIn alarm"
+#     comparison_operator = "LessThanThreshold"
 
-    metric_name = "NetworkIn"
-    statistic = "Average"
+#     metric_name = "NetworkIn"
+#     statistic = "Average"
 
-    threshold = "500000"
-    period = "120"
-    evaluation_periods = "2"
+#     threshold = "500000"
+#     period = "120"
+#     evaluation_periods = "2"
 
-    namespace = "AWS/EC2"
-    alarm_description = "Monitors ASG EC2 average network in (for scale down policy)"
-    alarm_actions = [aws_autoscaling_policy.app_ASG_scaledown_averageNetworkIn_policy.arn]
-}
+#     namespace = "AWS/EC2"
+#     alarm_description = "Monitors ASG EC2 average network in (for scale down policy)"
+#     alarm_actions = [aws_autoscaling_policy.app_ASG_scaledown_averageNetworkIn_policy.arn]
+# }
 
 # NetworkOut
 ############
